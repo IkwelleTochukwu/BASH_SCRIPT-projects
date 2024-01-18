@@ -19,3 +19,4 @@ if [ $# -eq 1 ]; then
     fi
 else
     echo "Usuage: $0 <server_IP_address>" | mail -s "Error in running $0 script" "your_email_address_@_email.com"
+fi
