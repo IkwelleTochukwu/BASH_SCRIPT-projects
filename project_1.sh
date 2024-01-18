@@ -4,47 +4,46 @@
 # send success or failure email. 
 # Use command line arguments for sending ip of the ftp server and loginID & password 
 
-SUBJECT_OF_EMAIL="Notice for mailing"
-RECIPIENT_OF_EMAIL="xyz@email.com"  # input your email
-
-
-# pass command line arguments
-while getopts ":s:u:p" opt; do
-    case $opt in
-        s)
-            FTP_SERVER="$OPTARG"
-            ;;
-        u)
-            FTP_USER="$OPTARG"
-            ;;
-        p)
-            FTP_PASSWORD="$OPTARG"
-            ;;
-        \?)
-            echo "Invalid option: -$OPTARG" >&2
-            exit 1
-            ;;
-        :)
-            echo "Option -$OPTARG requires an argument." >&2
-            exit 1
-            ;;
-    esac
-done
-
-# File details
-REMOTE_FILE=
-LOCAL_FILE=
-
-# download the file using the wget command
-wget --ftp-user="$FTP_USER" --ftp-password="$FTP_PASSWORD" "ftp://$FTP_SERVER$REMOTE_FILE" -O "$LOCAL_FILE"
-
-# To check if it was succesful and send message accordingly
-if [ $? -eq 0 ]; then
-    echo "File is downloaded successfully"
-    # send success email
-    echo "sending mail ...." | mail -s "$SUBJECT_OF_EMAIL" "$RECIPIENT"
-else
-    echo "Error! unable to download file"
-    # send failure email
-    echo "sending mail ...." | mail -s "$SUBJECT_OF_EMAIL" "$RECIPIENT"
+# check if all the required arguments are provided
+if [ $# -eq 3 ]; then
+    echo "Usuage: $0 <FTP_SERVER_IP> <FTP_USER_ID> <PASSWORD>"
 fi
+
+FTP_SERVER_IP=$1
+FTP_USER_ID=$2
+PASSWORD=$3
+FILE_DOWNLOAD=" "  # input file to download from ftp server
+LOCAL_FILE_PATH=" "  # input local file path
+
+# Function to send email on success or failure
+send_email() {
+    local SUBJECT=$1
+    local BODY=$2
+
+    echo "$BODY" | mail -s "$SUBJECT" your@email.com    # input your email address
+}
+
+# Function to download file from FTP server
+download_file() {
+    ftp -n $FTP_SERVER_IP <<END_SCRIPT
+    quote USER $FTP_USER_ID
+    quote PASS $PASSWORD
+    binary
+    get $FILE_DOWNLOAD $LOCAL_FILE_PATH/$FILE_DOWNLOAD
+    quit
+END_SCRIPT
+
+    # Check if the download was successful
+    if [ $? -eq 0 ]; then
+        send_email "FTP Download Successful" "File $FILE_DOWNLOAD downloaded successfully."
+    else
+        send_email "FTP Download Failed" "Failed to download file $FILE_DOWNLOAD from FTP server."
+    fi
+}
+
+# Schedule the script to run at a specific time using cron
+# For example, to run the script every day at 3:00 AM, add the following line to your crontab:
+# 0 3 * * * /path/to/your/script.sh <FTP_SERVER_IP> <LOGIN_ID> <PASSWORD>
+
+# Uncomment the line below if you want to execute the download immediately (for testing purposes)
+# download_file
