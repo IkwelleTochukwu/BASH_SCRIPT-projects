@@ -13,3 +13,7 @@ mkdir -p $disk_report_dir
 df -h > "$disk_report_dir/df_report.txt"
 
 echo "File system utilization report is generated and stored in $disk_report_dir"
+
+# to run this script daily at 8am, set up a cronjob using the crontab command
+# crontab -e  
+# 0 8 * * * /path/to/your/script.sh This cron expression (0 8 * * *) means "at 8:00 AM every day." Adjust the timing as needed.
