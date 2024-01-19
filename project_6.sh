@@ -14,12 +14,12 @@ if [ $# -eq 1 ]; then
         for users in $user_list; do
             if id "$users" &>/dev/null; then
                 echo "User $users exists!"
+                sudo passwd -l "$users"
+                echo "User $users is locked now"
             else 
                 echo "This user $users do not exist"
             fi
 
-            sudo passwd -l "$users"
-            echo "User $users is locked now"
         done
     else
         echo "Error: This file do not exists."
