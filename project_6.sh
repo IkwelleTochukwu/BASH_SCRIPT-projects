@@ -7,9 +7,11 @@ file_name=$1   # assign the the file_name variable to the parameter
 if [ $# -eq 1 ]; then
     echo "Parsing file now..."
     if [ -e "$file_name" ]; then
+        # Read usernames from the file into an array
+        mapfile -t user_list < "$file_name"
 
         # to check if the users exists in the system and lock the users 
-        for users in $file_name; do
+        for users in $user_list; do
             if id "$users" &>/dev/null; then
                 echo "User $users exists!"
             else 
