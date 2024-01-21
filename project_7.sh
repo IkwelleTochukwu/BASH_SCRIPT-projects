@@ -24,7 +24,7 @@ if [ -d "$directory_path" ]; then
             number_of_lines_to_keep=1000
             line_count=$( sudo wc -l < "$log_file" )
             # check if the file have at least 1000 lines
-            if [ "$line_count" -ge 1000 ]; then
+            if [ "$line_count" -ge "$number_of_lines_to_keep" ]; then
                 # calculate number of lines to remove
                 lines_to_remove=$((line_count - number_of_lines_to_keep))
                 # Use tail to get the lines to keep, and sed to remove the remaining lines
