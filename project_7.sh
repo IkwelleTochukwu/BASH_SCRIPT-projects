@@ -14,7 +14,7 @@ if [ -d "$directory_path" ]; then
     cd "$directory_path" || exit
 
     # List contents of the directory
-    List_of_files=$(ls -l 2> /dev/null)
+    List_of_files=$(find . -type f)    # using find command to recursively find files in the directory and sub-dirs
 
     # Iterate over the list of files and check if they are a file
     for log_file in $List_of_files; do
